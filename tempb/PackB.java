@@ -1,0 +1,4 @@
+package tempb;
+class PackB {
+
+    }
