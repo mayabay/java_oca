@@ -6,7 +6,7 @@ public class DecisionCtrl {
 
     public static void main(String[] args){
         //testIf();
-        test19(args);
+        test20(args);
     }
 
     static void testIf(){
@@ -112,10 +112,22 @@ public class DecisionCtrl {
         else
             System.out.println( n + " is not leap year." );
 
+    }
 
-
-
-
+    static void test20(String[] args){
+        int hilf, a = 3, b = 1, c = 2;
+        if ( a > b ){
+            hilf = b; 
+            b = a;
+            a = hilf;
+        }
+        if ( b > c ){
+            hilf = b;
+            b = c;
+            c = hilf;
+        }
+        
+        System.out.println( "a = " + a + ", b = " + b + ", c = " + c );
     }
 
 }
