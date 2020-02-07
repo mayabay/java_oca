@@ -137,14 +137,16 @@ public class LoopTasks{
     }
 
 
-    
+    static int swaps = 0;
+	static int[][] set;
+
 
     static void task34(){
 
         int n = 4;
-        
-        int[][] set;
-
+    	
+		set = new int[ (1*2*3*4) ][];
+	
         int[] arr = { 1,2,3,4 };
 
         System.out.println( " ------------------------------------------ " );
@@ -158,27 +160,21 @@ public class LoopTasks{
         // step 1
         int idxMax = arr.length -1;
 
-        int k = (idxMax - 1) - 1;       // k    a[2]
-        int l = (idxMax - 1);           // l    a[3]
+        int k = (idxMax); 			    // k    a[2] -> 3	
+        int l = (idxMax - 1);           // l    a[3] -> 4
 
         int[] rarr = new int[ arr.length ]; 
         rarr = getNextSeq( arr, k, l );
         printSeq( rarr );       
 
-        rarr = getNextSeq( rarr, k, l );
+        rarr = getNextSeq( arr, (k-1), l );
         printSeq( rarr ); 
 
-        rarr = getNextSeq( rarr, k, l );
-        printSeq( rarr );       
+        rarr = getNextSeq( arr, (k-2), l );
+        printSeq( rarr ); 
+		
 
-
-
-
-
-
-
-
-
+		System.out.println( "swaps = " + swaps );
 
     }
 
@@ -187,7 +183,7 @@ public class LoopTasks{
             System.out.print( " [ "+ arr[i] +" ] "  );
         }
         System.out.println( "" );
-
+		swaps++;
     }
 
     static int[] getNextSeq(int[] arr, int k, int l ) {
