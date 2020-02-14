@@ -35,9 +35,9 @@ public class LearnArrays {
         a4D[0][0][0] = new int[] { 1,2,3 };
         pa( a4D[0][0][0] );   // DNC 35: error: incompatible types: int[][][] cannot be converted to int[]
 
-
         int[] arr = {1,2,3,4};
         //System.out.println( Arrays.toString( arr ) );
+
 
        
     }
