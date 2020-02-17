@@ -9,7 +9,7 @@ public class VierGewinnt {
 	static final 	int 		COLS 	= 7;				// columns 7
 	static final 	int 		P1 		= 1;				// name player 1
 	static final 	int 		P2 		= 2;				// name player 2
-	static 			int			debug	= 0;				// log 
+	static 			int			debug	= 1;				// log 
 	static 			int			fields  = ROWS * COLS;		// fields in the game
 	static 			java.util.Random r;						
 	static 			double		initFieldsPerPlayer = 0.0D;	// 0.25D -> 25% of all fields will be initiated randomly for a player
