@@ -1,6 +1,6 @@
 package pkg_3;
 
-public class Spieler implements Comparable {
+public class Spieler implements Comparable<Spieler> {
 
 	private String name = "Hugo";
 	private int level = 1;
@@ -49,7 +49,7 @@ public class Spieler implements Comparable {
 	}
 	
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(Spieler o) {
 		// Compares this object with the specified object for order. 
 		// Returns a negative integer, zero, or a positive integer as this object
 		// is less than, equal to, or greater than the specified object.

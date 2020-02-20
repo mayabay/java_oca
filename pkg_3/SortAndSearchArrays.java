@@ -40,8 +40,8 @@ public class SortAndSearchArrays {
 		
 		//List<Spieler> players = new ArrayList<>();	// DNC for binarySearch
 		//List players = new ArrayList();				// ok for binary searcg
-		List players = new ArrayList();
-		//List<Spieler> players = new ArrayList<>();
+		//List players = new ArrayList();
+		List<Spieler> players = new ArrayList<>();
 		
 		players.add( new Spieler("Michael", 10) );
 		players.add( new Spieler() );
