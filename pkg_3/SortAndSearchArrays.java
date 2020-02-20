@@ -51,13 +51,11 @@ public class SortAndSearchArrays {
 		players.add( new Spieler("Berta", 135) );
 		players.add( new Spieler("Doris", 15) );
 		
-		
 		System.out.println( players );
 		
 		Collections.sort( players );
 		System.out.println("is sorted now ");
 		System.out.println( players );
-		
 		
 		System.out.println( Collections.binarySearch(players, new Spieler("Dietmar", 15)  ) );
 		
