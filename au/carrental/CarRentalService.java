@@ -4,6 +4,8 @@
  * public interface for the car rental service
  * */
 package au.carrental;
+import java.time.*;
+import au.carrental.assets.Site;
 
 public interface CarRentalService {
 
@@ -15,8 +17,9 @@ public interface CarRentalService {
 	
 	public void rentVehicle();
 	
+	public void offerLiquid( Site site );
 	
+	public Customer addCustomer( String firstName, String lastName, int age, String eMail  );
 	
-	
-	
+	public void printVehicles( Site location );
 }

@@ -16,6 +16,10 @@ public class Address {
 	private		String		postalCode;
 	private		String 		country;
 	
+	public Address( String name, String city, String country ) {
+		this( name, "", "no name street", "unknown sitrict", city, "no county", "zip code?", country );
+	}
+	
 	public Address(String name, String companyName, String street, String district, String city, String county,
 			String postalCode, String country) {
 		super();

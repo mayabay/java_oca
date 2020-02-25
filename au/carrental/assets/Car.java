@@ -4,7 +4,7 @@
  * represents a vehicle type of car
  * */
 package au.carrental.assets;
-
+import java.time.*;
 public class Car extends Vehicle {
 
 	private String description;
@@ -19,4 +19,13 @@ public class Car extends Vehicle {
 		this.description = description;
 	}
 
+	public Car(String type, String manufacturer, String model, LocalDate purchaseDate, String vehicleId,
+			int kilometersTravelled, double rentalPrice) {
+		super(type, manufacturer, model, purchaseDate, vehicleId, kilometersTravelled, rentalPrice);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	
+	
 }

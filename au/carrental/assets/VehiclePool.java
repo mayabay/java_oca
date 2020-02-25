@@ -5,6 +5,7 @@
  * */
 package au.carrental.assets;
 
+import java.util.Collections;
 import java.util.List;
 
 public class VehiclePool {
@@ -20,11 +21,11 @@ public class VehiclePool {
 		return vehicles.size();
 	}
 	
-	public addVehicle( Vehicle v ) {
+	public boolean addVehicle( Vehicle v ) {
 		return vehicles.add(v);
 	}
 
-	public removeVehicle( Vehicle v ) {
+	public boolean removeVehicle( Vehicle v ) {
 		return vehicles.remove(v);
 	} 
 
@@ -32,6 +33,9 @@ public class VehiclePool {
 		return vehicles.isEmpty();
 	}
 
-
+	public List<Vehicle> getVehicleList(){
+		//return this.vehicles;
+		return Collections.unmodifiableList(this.vehicles);
+	}
 
 }
