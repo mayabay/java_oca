@@ -47,6 +47,7 @@ public class Office implements CarRentalService {
 		System.out.println( "[1] print services" );
 		System.out.println( "[2] set location" );
 		
+		System.out.println( "[5] print my orders" );
 		System.out.println( "[6] print vehicles" );
 		System.out.println( "[7] add customer account" );
 		System.out.println( "[8] list locations" );
@@ -70,7 +71,14 @@ public class Office implements CarRentalService {
 
 	@Override
 	public Customer addCustomer(String firstName, String lastName, int age, String eMail) {
-		Customer c = new Customer( firstName, lastName, (LocalDate.now()).minusYears(age) , eMail, new IdDocument( (firstName + lastName), ("sn" + (age * 7)) ) , new Address( lastName, "Paris", "France" ) ); 
+		Customer c = new Customer( 	firstName,
+									lastName, (LocalDate.now()).minusYears(age) ,
+									eMail,
+									new IdDocument( (firstName + lastName), ("sn" + (age * 7)) ) ,
+									new Address( lastName, "Paris", "France" ) 
+									); 
+		CarRental cr = CarRental.getInstance();
+		cr.addCustomer(c);
 		return c;
 	}
 
@@ -84,6 +92,27 @@ public class Office implements CarRentalService {
 		for ( int i = 0; i < list.size(); i++ ) {
 			System.out.println( "["+ i +"] " + list.get(i) );
 		}
+	}
+
+	@Override
+	public void printMyOrders(Customer customer) {
+		
+		if ( customer == null) {
+			System.out.println(" pls login, or create account. ");
+			return;
+		}
+		
+		for ( Order order : customer.getOrders() ) {
+			System.out.println( "\t " + order );
+			for( OrderItem oi : order.getItems() ) {
+				System.out.println( "\t\\t " + oi );	
+			}
+		}
+		
+		if ( customer.getOrders().size() == 0 ) {
+			System.out.println("No orders for this customer!");
+		}
+		
 	}
 
 	

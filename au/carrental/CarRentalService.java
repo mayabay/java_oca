@@ -22,4 +22,6 @@ public interface CarRentalService {
 	public Customer addCustomer( String firstName, String lastName, int age, String eMail  );
 	
 	public void printVehicles( Site location );
+	
+	public void printMyOrders( Customer customer );
 }

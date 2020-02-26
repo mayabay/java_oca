@@ -24,6 +24,7 @@ public class Test {
 	{
 		// type (car,bike) | manufacturer | model | purchaseDate JJJJ-MM-TT | kilometersTravelled | vehicleId| rentalPrice 
 		v1pool.add( "car|Ford|Ka|2015-11-10|32214|HH IO 5367|25" );
+		v1pool.add( "car|Ford|Shelby GT350|1968-03-12|67421|HH SH 7382|79" );
 		
 		v2pool.add( "car|Mercedes|A|2018-01-05|6230|HH XX 5368|55" );
 		
@@ -32,12 +33,14 @@ public class Test {
 		v4pool.add( "car|Ford|Mondeo|2018-10-30|10213|HH XX 5370|40" );
 		
 		v5pool.add( "transporter|Mercedes|Vito|2016-04-13|45109|HH TP 4007|49" );
+		v5pool.add( "car|Jeep|Grand Cherokee|2017-04-17|173219|HH CH 7119|69" );
 		
 		v6pool.add( "transporter|Mercedes|Sprinter|2018-12-15|10356|HH TP 4008|59" );
 		
 		v7pool.add( "transporter|Ford|Transit|2019-02-23|3045|HH TP 4009|69" );
 		
 		v8pool.add( "transporter|VW|Crafter|2017-07-30|28987|HH TP 4010|39" );
+		v8pool.add( "car|Jeep|Willys|1945-01-01|2784|HH JP 1945|59" );
 		
 		// bikes
 		
@@ -230,6 +233,9 @@ public class Test {
 				case "2": 	this.location = setSite(sc); 
 							break;
 				
+				case "5":	office.printMyOrders(this.customer);	
+							break;							
+							
 				case "6":	office.printVehicles(this.location);	
 							break;
 							
