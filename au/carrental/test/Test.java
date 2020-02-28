@@ -4,9 +4,14 @@ import java.util.*;
 import java.time.*;
 import au.carrental.*;
 import au.carrental.assets.*;
+import au.carrental.crm.Account;
+import au.carrental.crm.Customer;
+import au.carrental.oms.Order;
 
 public class Test {
 
+	public static final boolean	debug = true;
+	
 	private static CarRental carRental;
 	
 	private	static 	List<String> 	v1pool = new ArrayList<>();
@@ -214,6 +219,11 @@ public class Test {
 		// get office services
 		Office office = carRental.getOffice();
 		
+		//John,Doe,46,john.doe@mail.com,password
+		if (debug) {
+			this.customer = office.addCustomer("John", "Doe", 46, "john.doe@mail.com", "pw");
+			System.out.println("Test.enterOffice() customer created: John,Doe,46,john.doe@mail.com,pw  ");
+		}
 		office.printWelcomeMessage();
 		
 		boolean visitingCarRental = true;
@@ -228,26 +238,36 @@ public class Test {
 
 			switch( input ) {
 				
-				case "1": 	office.printServices(); 
+				case "01": 	office.printServices(); 
 							break;
-				case "2": 	this.location = setSite(sc); 
+				case "02": 	this.location = setSite(sc); 
 							break;
-				
-				case "5":	office.printMyOrders(this.customer);	
+				case "05":	office.printMyOrders(this.customer);	
 							break;							
-							
-				case "6":	office.printVehicles(this.location);	
+				case "06":	office.printVehicles(this.location);	
 							break;
-							
-				case "7": 	this.customer = this.setCustomer(sc, office);
+				case "07": 	this.customer = this.setCustomer(sc, office);
 							System.out.println("customer created => " + this.customer );  
 							break;
-				case "8": 	office.printLocations(); break;
-				case "9": 	office.offerLiquid(this.location); 
+				case "71":  this.logout(office);
 							break;
-				case "x": 	visitingCarRental = false; 
+				case "72":  this.login(sc, office);
+							break;							
+				case "08": 	office.printLocations(); 
 							break;
-				default: 	visitingCarRental = false; 
+				case "09": 	office.offerLiquid(this.location); 
+							break;
+				case "10": 	Order order = office.placeAnOrder(sc, this.customer);
+							if (order != null) {
+								this.carRental.addOrder(order);
+							}
+							break;							
+				case "81": 	office.printAllCustomers(); 
+							break;							
+				case "99": 	visitingCarRental = false; 
+							break;
+				default: 	//visitingCarRental = false; 
+							System.out.println("unknown command.");
 							break;
 			}
 			System.out.println();
@@ -257,18 +277,34 @@ public class Test {
 		sc.close();
 	}
 
+	private void login(Scanner sc, Office office ) {
+		System.out.println("enter credentials in one line: e.g. ->John_Doe|PASSWORD<- ");
+		String in = sc.nextLine();
+
+		String[] splits = in.split("[|]");
+		this.customer = office.login(splits[0], splits[1]);
+	}
+	
+	private void logout( Office office ) {
+		this.customer = null;
+		office.logout();
+	}
+	
 	private Site setSite( Scanner sc ) {
 		System.out.println("change your location, enter idx for new site: ");
 		String in = sc.nextLine();
 		return carRental.getSite( (new Integer( in ) ).intValue()  );
 	}
 	
+	
 	private Customer setCustomer(Scanner sc, Office office ) {
 		// String firstName, String lastName, int age, String eMail
-		System.out.println( "Customer account creation: pls enter like this: <John,Doe,46,john.doe@mail.com>" );
+		System.out.println( "Customer account creation: pls enter like this: ->John,Doe,46,john.doe@mail.com,password<-" );
+		System.out.println( "Your account username will be ->John_Doe<-" );
 		String input = sc.nextLine();
+		
 		String[] splitted = input.split(",");
-		return office.addCustomer(splitted[0], splitted[1], (new Integer(splitted[2])).intValue(), splitted[3]) ;
+		return office.addCustomer(splitted[0], splitted[1], (new Integer(splitted[2])).intValue(), splitted[3], splitted[4]) ;
 	}
 	
 }

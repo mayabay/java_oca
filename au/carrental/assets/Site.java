@@ -38,6 +38,11 @@ public class Site {
 	public VehiclePool getVehiclePool() {
 		return vehiclePool;
 	}
+
+	@Override
+	public String toString() {
+		return "Site [name=" + name + "]";
+	}
 	
 	
 	
