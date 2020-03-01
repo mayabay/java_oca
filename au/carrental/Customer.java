@@ -5,6 +5,9 @@
  * 
  * */
 package au.carrental;
+import au.carrental.oms.Order;
+import au.carrental.oms.OrderItem;
+import au.carrental.oms.IdDocument;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.LocalTime;

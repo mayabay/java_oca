@@ -10,7 +10,7 @@ import au.carrental.oms.Order;
 
 public class Test {
 
-	public static final boolean	debug = true;
+	public static final boolean	debug = false;
 	
 	private static CarRental carRental;
 	
@@ -232,7 +232,9 @@ public class Test {
 		
 		while (visitingCarRental) {
 			
-			System.out.println("please enter service; [1] = Menu (user located at" + this.location.getAddress() + "; customer account = "+ this.customer +" ): ");
+			
+			System.out.println( "\t->01<- print menu; (user located at " + this.location.getAddress() + "; customer account = "+ this.customer +" ):  " );
+			System.out.println( "please enter service:  ");
 			
 			String input = sc.nextLine();
 

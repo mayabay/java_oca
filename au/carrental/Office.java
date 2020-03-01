@@ -26,6 +26,8 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	
 	private 	String 	welcomeMessage;
 	
+
+	
 	@Override
 	public void printServices() {
 		System.out.println( "[01] print services" );
