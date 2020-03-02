@@ -13,8 +13,6 @@ public class Site {
 	private 	VehiclePool		vehiclePool;
 	private 	CoffeeMachine	coffeeMachine;
 	
-	
-	
 	public Site(String name, Address address, VehiclePool vehiclePool, CoffeeMachine coffeeMachine) {
 		super();
 		this.name = name;
@@ -43,6 +41,25 @@ public class Site {
 	public String toString() {
 		return "Site [name=" + name + "]";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		
+		if ( !(obj instanceof Site) )
+			return false;
+		
+		Site otherSite = (Site)obj;
+		if ( this.getName().equals(otherSite.getName()) ) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+	
 	
 	
 	

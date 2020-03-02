@@ -5,6 +5,7 @@
  * */
 package au.carrental.assets;
 import java.time.LocalDate;
+import au.carrental.oms.Order;
 public abstract class Vehicle {
 
 	private final		String		type;
@@ -14,6 +15,7 @@ public abstract class Vehicle {
 	private String 		vehicleId;
 	private int 		kilometersTravelled;	
 	private double		rentalPrice;
+	private Order		reservedByOrder; 
 	
 	public	abstract	String getVehicleDescription();
 
@@ -36,8 +38,6 @@ public abstract class Vehicle {
 		this.rentalPrice = rentalPrice;
 	}
 	
-	
-	
 	public void setVehicleId(String vehicleId) {
 		this.vehicleId = vehicleId;
 	}
@@ -50,10 +50,18 @@ public abstract class Vehicle {
 		this.rentalPrice = rentalPrice;
 	}
 
+	public Order getReservedByOrder() {
+		return reservedByOrder;
+	}
+
+	public void setReservedByOrder(Order reservedByOrder) {
+		this.reservedByOrder = reservedByOrder;
+	}
+
 	@Override
 	public String toString() {
 		return "Vehicle [type=" + type + ", manufacturer=" + manufacturer + ", model=" + model + ", vehicleId="
-				+ vehicleId + ", kilometersTravelled=" + kilometersTravelled + ", rentalPrice=" + rentalPrice + "]";
+				+ vehicleId + "]";
 	}
 
 	

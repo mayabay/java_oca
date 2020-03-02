@@ -38,4 +38,8 @@ public class VehiclePool {
 		return Collections.unmodifiableList(this.vehicles);
 	}
 
+	public Vehicle getVehicle( int idx ) {
+		return this.vehicles.get(idx);
+	}
+	
 }

@@ -17,6 +17,7 @@ import au.carrental.crm.Customer;
 import au.carrental.oms.IdDocument;
 import au.carrental.oms.Order;
 import au.carrental.oms.OrderItem;
+import au.carrental.oms.Payment;
 import au.carrental.test.Test;
 import au.carrental.assets.Vehicle;
 
@@ -41,6 +42,8 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println( "[08] list locations" );
 		System.out.println( "[09] drink coffee" );
 		System.out.println( "[10] place an order" );
+		System.out.println( "[11] revoke order" );
+		System.out.println( "[12] checkout vehicle" );
 		System.out.println( "[81] print all customers" );
 		System.out.println( "[99] exit the office" );
 	}	
@@ -67,12 +70,6 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		for( int i = 0; i < locations.size(); i++) {
 			System.out.println("[" + i + "] " + locations.get(i).getName() + ", " + locations.get(i).getAddress() + " vehicles = " + locations.get(i).getVehiclePool().size() );
 		}
-	}
-
-	@Override
-	public void rentVehicle() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -111,7 +108,9 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		List<Vehicle> list = vp.getVehicleList();
 
 		for ( int i = 0; i < list.size(); i++ ) {
-			System.out.println( "["+ i +"] " + list.get(i) );
+			Vehicle v = list.get(i);
+			String reserved = ""; if ( v.getReservedByOrder() != null ) { reserved = " |!RESERVED!| "; }
+			System.out.println( "["+ i +"] " + v  + " " + reserved);
 		}
 	}
 
@@ -173,7 +172,7 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	}
 
 	@Override
-	public Order placeAnOrder(java.util.Scanner sc , Customer customer) {
+	public Order placeAnOrder(java.util.Scanner sc , Customer customer, Site site) {
 		
 		CarRental cr = CarRental.getInstance();
 		
@@ -213,9 +212,47 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		String inReturn = sc.nextLine();
 		Site returnSite = getSiteFromInput(cr,  inReturn );
 		LocalDateTime returnLDT = getDTFromInput( cr, inReturn );		
-		
+
 		if (Test.debug)
 			System.out.println("return --> " +  returnSite + " " + returnLDT );		
+		
+		// 4) choose vehicle
+		System.out.println("Choose a vehicle located at your pickup site:");
+		this.printVehicles( pickupSite );
+
+		Vehicle vehicle;
+		while (true) {
+			String inIdx = sc.nextLine();
+			vehicle = (pickupSite.getVehiclePool()).getVehicle( Integer.parseInt(inIdx) );
+			if ( vehicle.getReservedByOrder() == null )	{ break; }
+			else{ System.out.println("vehicle is reserved, pls choose again :"); }
+		}
+		
+		System.out.println("Your vehicle " + vehicle);
+		
+		// 5) choose extras
+			// todo
+		
+		// 6) review and choose payment
+		System.out.println("---------- review  ----------");
+		System.out.println("[1] pickup " + pickupSite + " at " + pickupLDT);
+		System.out.println("[2] return" + returnSite + " at " + returnLDT);
+		System.out.println("[3] vehicle " + vehicle);
+		
+		System.out.println("payment selected [cash???] (todo)");
+		Payment payment = new Payment();
+		
+		System.out.println("OK? [y]es or [c]ancel ");
+		String finalStep = sc.nextLine();
+		
+		if ( finalStep.equals("y") ) {
+			OrderItem orderItem = new OrderItem( vehicle, pickupSite, pickupLDT, returnSite, returnLDT );
+			order = new Order( LocalDateTime.now(), customer );
+			order.addItem(orderItem);
+			customer.addOrder(order);
+			vehicle.setReservedByOrder(order);
+			return order;
+		}
 		
 		return order;
 	}
@@ -237,6 +274,26 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		int year = Integer.parseInt(ld[0]), month = Integer.parseInt(ld[1]), day = Integer.parseInt(ld[2]);
 		int hour = Integer.parseInt(lt[0]), min = Integer.parseInt(lt[1]);
 		return LocalDateTime.of(year, month, day, hour, min);
+	}
+
+	
+	
+	@Override
+	public void revokeOrder(Order order) {
+		for(OrderItem oi : order.getItems() ) {
+			(oi.getVehicle()).setReservedByOrder(null);
+		}
+	}
+
+	@Override
+	public void checkOutVehicle(Order order) {
+		
+		
 	}	
+
+	
+	
+	
+	
 	
 }

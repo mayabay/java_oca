@@ -9,14 +9,16 @@ import java.time.LocalDateTime;
 public class Order {
 
 	private static 	int orderIdPool = 1001;
+	private static	int invoiceIdPool = 1;		
 	
 	private 		LocalDateTime 	dtOrdered;
 	private			int				orderID;
 	private 		Customer		customer;
 	private 		List<OrderItem> items;
 	private 		int 			invoiceId;
+	private 		Payment			payment;
 	
-	protected Order(LocalDateTime dtOrdered, Customer customer) {
+	public Order(LocalDateTime dtOrdered, Customer customer) {
 		super();
 		this.dtOrdered = dtOrdered;
 		this.orderID = orderIdPool++;
@@ -34,7 +36,7 @@ public class Order {
 	}
 	
 	public void setInvoiceId( int id ) {
-		this.invoiceId = id;
+		this.invoiceId = invoiceIdPool++;
 	}
 
 	public  List<OrderItem> getItems(){

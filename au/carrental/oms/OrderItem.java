@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 public class OrderItem {
 	
-	private			int				orderID;
 	private 		Vehicle			vehicle;
 	
 	private 		Site			pickupSite;
@@ -15,10 +14,9 @@ public class OrderItem {
 	private 		Site			returnSite;
 	private 		LocalDateTime	returnDT;
 	
-	protected OrderItem(int orderID, Vehicle vehicle, Site pickupSite, LocalDateTime pickupDT, Site returnSite,
+	public OrderItem( Vehicle vehicle, Site pickupSite, LocalDateTime pickupDT, Site returnSite,
 			LocalDateTime returnDT) {
 		super();
-		this.orderID = orderID;
 		this.vehicle = vehicle;
 		this.pickupSite = pickupSite;
 		this.pickupDT = pickupDT;
@@ -26,9 +24,41 @@ public class OrderItem {
 		this.returnDT = returnDT;
 	}
 
+	
+	
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+
+
+
+	public Site getPickupSite() {
+		return pickupSite;
+	}
+
+
+
+	public LocalDateTime getPickupDT() {
+		return pickupDT;
+	}
+
+
+
+	public Site getReturnSite() {
+		return returnSite;
+	}
+
+
+
+	public LocalDateTime getReturnDT() {
+		return returnDT;
+	}
+
+
+
 	@Override
 	public String toString() {
-		return "OrderItem [orderID=" + orderID + ", pickupSite=" + pickupSite.getAddress().getCompanyName() + ", returnSite=" + returnSite.getAddress().getCompanyName() + "]";
+		return "OrderItem [vehicle = "+ vehicle +", pickupSite=" + pickupSite.getAddress().getCity() + ", returnSite=" + returnSite.getAddress().getCity() + "]";
 	}
 	
 	

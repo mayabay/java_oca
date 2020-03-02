@@ -10,7 +10,7 @@ import au.carrental.oms.Order;
 
 public class Test {
 
-	public static final boolean	debug = false;
+	public static final boolean	debug = true;
 	
 	private static CarRental carRental;
 	
@@ -25,6 +25,7 @@ public class Test {
 	
 	private 		Site 			location;
 	private 		Customer		customer;
+	private 		Order			order;
 	
 	{
 		// type (car,bike) | manufacturer | model | purchaseDate JJJJ-MM-TT | kilometersTravelled | vehicleId| rentalPrice 
@@ -233,7 +234,10 @@ public class Test {
 		while (visitingCarRental) {
 			
 			
-			System.out.println( "\t->01<- print menu; (user located at " + this.location.getAddress() + "; customer account = "+ this.customer +" ):  " );
+			System.out.println( "\t [01] print menu; (user located at " + this.location.getAddress() + "; :  " );
+			System.out.println( "\t customer account = "+ this.customer +" )" );
+			System.out.println( "\t order in process = "+ this.order +" )" );
+			
 			System.out.println( "please enter service:  ");
 			
 			String input = sc.nextLine();
@@ -259,10 +263,16 @@ public class Test {
 							break;
 				case "09": 	office.offerLiquid(this.location); 
 							break;
-				case "10": 	Order order = office.placeAnOrder(sc, this.customer);
-							if (order != null) {
-								this.carRental.addOrder(order);
+				case "10": 	if ( order == null ) {
+								order = office.placeAnOrder(sc, this.customer, this.location);
+							}else {
+								System.out.println("order already in process, revoke order [11] or checkout vehicle [12]");
 							}
+							break;	
+				case "11":	office.revokeOrder(this.order);	
+							this.order = null;
+							break;
+				case "12":	System.out.println("checkout vehicle: TODO");
 							break;							
 				case "81": 	office.printAllCustomers(); 
 							break;							

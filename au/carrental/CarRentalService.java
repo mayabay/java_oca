@@ -18,8 +18,6 @@ public interface CarRentalService {
 	
 	public void printServices();
 	
-	public void rentVehicle();
-	
 	public void offerLiquid( Site site );
 	
 	public Customer addCustomer( String firstName, String lastName, int age, String eMail, String passw  );
@@ -32,7 +30,10 @@ public interface CarRentalService {
 	
 	public Customer login( String username, String password );
 	
-	public Order placeAnOrder(java.util.Scanner sc,  Customer customer );
+	public Order placeAnOrder(java.util.Scanner sc,  Customer customer, Site site );
 		
+	public void revokeOrder (Order order);
+	
+	public void checkOutVehicle( Order order );
 	
 }

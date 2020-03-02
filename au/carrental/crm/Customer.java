@@ -49,6 +49,10 @@ public class Customer {
 	public List<Order> getOrders(){
 		return Collections.unmodifiableList(this.orders);
 	}
+
+	public void addOrder (Order order) {
+		this.orders.add(order);
+	}
 	
 	protected Account getAccount() {
 		return this.account;
