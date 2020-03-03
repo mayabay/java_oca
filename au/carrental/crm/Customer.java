@@ -11,6 +11,7 @@ import au.carrental.Address;
 import au.carrental.CarRental;
 import au.carrental.oms.IdDocument;
 import au.carrental.oms.Order;
+import au.carrental.assets.Vehicle;
 import au.carrental.test.Test;
 
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class Customer {
 	private List<Order>		orders;
 	private Account			account;
 	private int				customerId;
+	private List<Vehicle>	rentedVehicles;
 	
 	public Customer(String firstName, String lastName, LocalDate birthDate, String eMail, IdDocument idDoc,
 			Address address, Account account) {
@@ -44,8 +46,11 @@ public class Customer {
 		this.orders = new ArrayList<>();
 		this.account = account;
 		this.customerId = customerIdPool++;
+		this.rentedVehicles = new ArrayList<>();
 	}
 
+	// ----------------------------------------
+	
 	public List<Order> getOrders(){
 		return Collections.unmodifiableList(this.orders);
 	}
@@ -70,11 +75,32 @@ public class Customer {
 		return this.birthDate;
 	}
 	
+	public boolean addRentedVehicle( Vehicle vehicle ) {
+		return this.rentedVehicles.add( vehicle );
+	}
+	
+	public boolean removeRentedVehicle( Vehicle vehicle ) {
+		return this.rentedVehicles.remove(vehicle);
+	}
+
+	public void printRentedVehicles() {
+		for( Vehicle vehicle : this.rentedVehicles ) {
+			System.out.println("\t\t rented --> " + vehicle);
+		}
+	}
+
+	public Address getAddress() {
+		return address;
+	}	
+	
+	
+	// ----------------------------------------
+
 	@Override
 	public String toString() {
 		return "Customer [firstName=" + firstName + ", lastName=" + lastName + "]";
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

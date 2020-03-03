@@ -31,6 +31,9 @@ public class Test {
 		// type (car,bike) | manufacturer | model | purchaseDate JJJJ-MM-TT | kilometersTravelled | vehicleId| rentalPrice 
 		v1pool.add( "car|Ford|Ka|2015-11-10|32214|HH IO 5367|25" );
 		v1pool.add( "car|Ford|Shelby GT350|1968-03-12|67421|HH SH 7382|79" );
+		v1pool.add( "racingbike|Cannondale|Synapse 2017|2017-01-01|4021|FT Ma 1973|19" );
+		v1pool.add( "racingbike|Canyon|Ultimate CF SL|2019-07-01|8131|HH Do 7482|29" );
+		v1pool.add( "starship|USS Enterprise|NCC-1701|2245-04-02|234678123|NCC-1701|1250000" );
 		
 		v2pool.add( "car|Mercedes|A|2018-01-05|6230|HH XX 5368|55" );
 		
@@ -73,6 +76,12 @@ public class Test {
 			case "motorbike": 
 				v = new Motorbike( s[0], s[1], s[2], LocalDate.parse(s[3]), s[5], (new Integer(s[4])).intValue() , (new Double( s[6]) ).doubleValue()  ); 
 				break;
+			case "racingbike": 
+				v = new RacingBike( s[0], s[1], s[2], LocalDate.parse(s[3]), s[5], (new Integer(s[4])).intValue() , (new Double( s[6]) ).doubleValue()  ); 
+				break;		
+			case "starship": 
+				v = new StarShip( s[0], s[1], s[2], LocalDate.parse(s[3]), s[5], (new Integer(s[4])).intValue() , (new Double( s[6]) ).doubleValue()  ); 
+				break;					
 			default: //throw new IllegalStateException("pls check vehicle type!");
 				break;
 		}
@@ -83,7 +92,7 @@ public class Test {
 	void buildCarRentalService() {
 		
 		// 1) name of company
-		String nameOfCompany = "First Australian Car Rental Service since 1899!" ;
+		String nameOfCompany = "James Cook's Car Rental Service, since 1770!" ;
 		
 		// 2( build sites
 		// vehicle pools
@@ -237,6 +246,10 @@ public class Test {
 			System.out.println( "\t [01] print menu; (user located at " + this.location.getAddress() + "; :  " );
 			System.out.println( "\t customer account = "+ this.customer +" )" );
 			System.out.println( "\t order in process = "+ this.order +" )" );
+			if ( this.customer != null ) {
+				this.customer.printRentedVehicles();
+			}
+			
 			
 			System.out.println( "please enter service:  ");
 			
@@ -272,8 +285,22 @@ public class Test {
 				case "11":	office.revokeOrder(this.order);	
 							this.order = null;
 							break;
-				case "12":	System.out.println("checkout vehicle: TODO");
-							break;							
+				case "12":	if (this.order == null) { System.out.println("pls show your order!"); }
+							else {
+								office.checkOutVehicle(order, location);
+							}
+							break;		
+				case "13":	if (this.order == null) { System.out.println("not possible"); }
+							else {
+								Site dst = office.driveToNextDst(this.order);	
+								if (dst != null ) { this.location = dst; } 
+							}
+							break;
+				case "14":	if (this.order == null) { System.out.println("not possible"); }
+							else{
+								this.order = office.returnVehicle(sc, this.order, this.location);
+							}			
+							break;
 				case "81": 	office.printAllCustomers(); 
 							break;							
 				case "99": 	visitingCarRental = false; 

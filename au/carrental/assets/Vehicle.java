@@ -16,6 +16,7 @@ public abstract class Vehicle {
 	private int 		kilometersTravelled;	
 	private double		rentalPrice;
 	private Order		reservedByOrder; 
+	private boolean 	isRented;
 	
 	public	abstract	String getVehicleDescription();
 
@@ -38,16 +39,30 @@ public abstract class Vehicle {
 		this.rentalPrice = rentalPrice;
 	}
 	
+	// ----------------------------------------
+	
+	public boolean isRented() {
+		return isRented;
+	}
+
+	public void setRented(boolean isRented) {
+		this.isRented = isRented;
+	}
+
 	public void setVehicleId(String vehicleId) {
 		this.vehicleId = vehicleId;
 	}
 
-	public void setKilometersTravelled(int kilometersTravelled) {
-		this.kilometersTravelled = kilometersTravelled;
+	public void addKilometersTravelled(int kilometersTravelled) {
+		this.kilometersTravelled += kilometersTravelled;
 	}
 
 	public void setRentalPrice(double rentalPrice) {
 		this.rentalPrice = rentalPrice;
+	}
+
+	public double getRentalPrice() {
+		return rentalPrice;
 	}
 
 	public Order getReservedByOrder() {
@@ -58,12 +73,45 @@ public abstract class Vehicle {
 		this.reservedByOrder = reservedByOrder;
 	}
 
+	public String getVehicleId() {
+		return vehicleId;
+	}
+
+	// ----------------------------------------
+	
 	@Override
 	public String toString() {
 		return "Vehicle [type=" + type + ", manufacturer=" + manufacturer + ", model=" + model + ", vehicleId="
 				+ vehicleId + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		return this.vehicleId.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if ( obj == null ) {
+			return false;
+		}
+		
+		if ( !( obj instanceof Vehicle ) ) {
+			return false;
+		}
+		
+		Vehicle otherVehicle = (Vehicle)obj;
+		
+		if ( otherVehicle.getVehicleId().equals(this.vehicleId) ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	
+	
 	
 	
 }

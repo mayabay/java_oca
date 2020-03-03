@@ -34,6 +34,9 @@ public interface CarRentalService {
 		
 	public void revokeOrder (Order order);
 	
-	public void checkOutVehicle( Order order );
+	public void checkOutVehicle( Order order, Site site );
 	
+	public Site driveToNextDst( Order order );
+	
+	public Order returnVehicle(java.util.Scanner sc, Order order, Site site );
 }

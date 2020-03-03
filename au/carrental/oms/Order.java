@@ -25,8 +25,13 @@ public class Order {
 		this.customer = customer;
 		this.items = new ArrayList<>();
 		this.invoiceId = -1;
+		this.payment = new Payment();
 	}
 	
+	public int getOrderID() {
+		return orderID;
+	}
+
 	public boolean addItem( OrderItem oi ) {
 		return items.add(oi);
 	}
@@ -43,6 +48,14 @@ public class Order {
 		return Collections.unmodifiableList(this.items);
 	}
 	
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public Payment getPayment() {
+		return payment;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [orderID=" + orderID + "]";

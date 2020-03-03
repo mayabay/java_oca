@@ -44,6 +44,12 @@ public class CarRental {
 		return instance;
 	}
 	
+	
+	
+	public String getName() {
+		return name;
+	}
+
 	public List<Site> getLocations(){
 		return Collections.unmodifiableList(this.sites);
 	}
@@ -71,5 +77,9 @@ public class CarRental {
 	public boolean addOrder( Order o ) {
 		return this.orders.add(o);
 	}
+	
+	public boolean removeOrder( Order o ) {
+		return this.orders.remove(o);
+	}	
 	
 }

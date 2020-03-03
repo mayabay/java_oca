@@ -17,6 +17,7 @@ class HomoSapiens extends Primate implements CanSpeakWithGrammar {
 
 interface CanSpeak{
     void say();
+
 }
 interface CanSpeakWithGrammar extends CanSpeak{
     void sayGrammatically();
@@ -39,6 +40,10 @@ interface CanDoStuff{
 
     }
 
+    static void _do(){
+        System.out.println( "doing it in stuff" );
+    }
+
 }
 interface CanLearn extends CanDoStuff {
 
@@ -47,12 +52,48 @@ interface CanLearn extends CanDoStuff {
     void learnIt();
 
     default String learnStuff (String stuff){
-        return "learning " + stuff;
-
+        return "Can Learn -> learning " + stuff;
+    }
+    
+    static void _do(){
+        System.out.println( "doing it" );
     }
 }
-public class LearnInterfaces implements CanLearn {
+interface CanLearnOnline extends CanDoStuff {
    
+
+    default String learnStuff (String stuff){
+        return "learning online " + stuff;
+    }
+
+    static void _do(){
+        System.out.println( "doing it online" );
+    }
+}
+
+interface CanLearnClassic {
+
+    default String learnStuff (String stuff){
+        return "learning classic " + stuff;
+    }
+
+    static void _do(){
+        System.out.println( "doing it classic" );
+    }
+}
+
+/*
+ *  both interfaces have method learnStuff with same signature
+ *  DNC 85: error: class LearnInterfaces inherits unrelated defaults
+ *
+ * */
+public class LearnInterfaces implements CanLearnOnline, CanLearnClassic {
+   
+    @Override
+    public String learnStuff(String s){
+        return "learn learn " + s;
+    }
+
     static final boolean haveMotivation;    // final static here
 
     static { haveMotivation = true; }       // last chance to initiate final var
@@ -65,11 +106,33 @@ public class LearnInterfaces implements CanLearn {
         isHungry = true;                // can init final in ctor
     }
 
+    
+    static void _do(){
+        System.out.println( "doing it in LearnInterfaces" );
+    }
+
     public static void main(String[] args){
-        
+
         //new LearnInterfaces().learnIt();
         LearnInterfaces li =  new LearnInterfaces();
-        li.castIt();
+        //li.castIt();
+       
+        // call m(), which i have overridden
+        System.out.println( li.learnStuff("C++") );
+        
+        // you cannot call this froḿ static context
+        // System.out.println( CanLearnOnline.super.learnStuff("C++") );
+        
+        li.callLearnStuff();
+
+        //_do();
+        //CanLearn._do();
+        //CanDoStuff._do();
+    }
+
+    void callLearnStuff(){
+
+        System.out.println( CanLearnOnline.super.learnStuff("C++") );
     }
 
     // DNC  11: error: learnIt() in LearnInterfaces cannot implement learnIt() in CanLearn

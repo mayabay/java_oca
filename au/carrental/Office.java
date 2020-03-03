@@ -4,6 +4,10 @@
  * public interface to the car rental service
  * */
 package au.carrental;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -25,6 +29,8 @@ public class Office implements CarRentalService, CarRentalAdminService {
 
 	private 	final 	static 		int 	MINIMUM_AGE_YEARS = 26;
 	
+	private 	final 	static 		double 	PRICE_KM = 0.15;
+	
 	private 	String 	welcomeMessage;
 	
 
@@ -32,7 +38,7 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	@Override
 	public void printServices() {
 		System.out.println( "[01] print services" );
-		System.out.println( "[02] set location" );
+		System.out.println( "[02] set location*" );
 		
 		System.out.println( "[05] print my orders" );
 		System.out.println( "[06] print vehicles" );
@@ -44,7 +50,9 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println( "[10] place an order" );
 		System.out.println( "[11] revoke order" );
 		System.out.println( "[12] checkout vehicle" );
-		System.out.println( "[81] print all customers" );
+		System.out.println( "[13] drive to next destination" );
+		System.out.println( "[14] return vehicle" );
+		System.out.println( "[81] print all customers*" );
 		System.out.println( "[99] exit the office" );
 	}	
 	
@@ -132,7 +140,6 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		if ( customer.getOrders().size() == 0 ) {
 			System.out.println("No orders for this customer!");
 		}
-		
 	}
 
 	@Override
@@ -174,6 +181,11 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	@Override
 	public Order placeAnOrder(java.util.Scanner sc , Customer customer, Site site) {
 		
+		if ( (site.getVehiclePool()).size() == 0 ) {
+			System.out.println( "No vehicles to rent at this site!" );
+			return null;
+		}
+		
 		CarRental cr = CarRental.getInstance();
 		
 		System.out.println("---------- rent a vehicle  ----------");
@@ -213,6 +225,13 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		Site returnSite = getSiteFromInput(cr,  inReturn );
 		LocalDateTime returnLDT = getDTFromInput( cr, inReturn );		
 
+		// 3b) period
+		Period p = Period.between( pickupLDT.toLocalDate(), returnLDT.toLocalDate()  );
+		if ( p.getDays() < 1 ) {
+			System.out.println("[ERR] minimum rent is 1 day.");
+			return null;
+		}
+		
 		if (Test.debug)
 			System.out.println("return --> " +  returnSite + " " + returnLDT );		
 		
@@ -251,8 +270,13 @@ public class Office implements CarRentalService, CarRentalAdminService {
 			order.addItem(orderItem);
 			customer.addOrder(order);
 			vehicle.setReservedByOrder(order);
+			double price = checkoutOrder( order );
+			System.out.println("total $ " + price + " for " + p.getDays() + " days.");
 			return order;
 		}
+		
+		// add order to car rental orders
+		cr.addOrder(order);
 		
 		return order;
 	}
@@ -276,7 +300,56 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		return LocalDateTime.of(year, month, day, hour, min);
 	}
 
-	
+	private double checkoutOrder( Order order ) {
+		
+		CarRental cr = CarRental.getInstance();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("Company : " + cr.getName() + "\n");
+		sb.append("Order ID = " + order.getOrderID() + "\n");
+		Customer customer = order.getCustomer();
+		sb.append("customer = " + customer + "\n");
+		sb.append("address = " + customer.getAddress() + "\n");
+		
+		sb.append(" ---------------------------- " + "\n");
+		
+		double total = 0;
+		for(OrderItem oi : order.getItems() ) {
+			Vehicle vehicle = oi.getVehicle();
+			double price = vehicle.getRentalPrice();
+			LocalDateTime pickupLDT = oi.getPickupDT();
+			LocalDateTime returnLDT = oi.getReturnDT();
+			Period p = Period.between( pickupLDT.toLocalDate(), returnLDT.toLocalDate()  );
+			int days = p.getDays();
+			double oiPrice = price * days;
+			total += oiPrice;
+			sb.append(oi.toString() + "\n");
+			sb.append("\t\t $ " + oiPrice + "\n");
+		}
+		sb.append(" ---------------------------- " + "\n");
+		sb.append("\t\t $ total: " + total + "\n");
+		sb.append("payment: " + order.getPayment() + "\n");
+		
+		// write file 
+		// https://www.codejava.net/java-se/file-io/how-to-read-and-write-text-file-in-java
+		String userHome = System.getProperty("user.home");
+		File f = new File(userHome + File.separatorChar + "Order_id" + order.getOrderID() + "_.txt"  );
+		try {
+			if ( f.exists() ) {
+				f.delete();
+			}
+			
+			FileWriter writer = new FileWriter(f);
+			BufferedWriter bufferedWriter = new BufferedWriter(writer);			
+			bufferedWriter.write(sb.toString());
+			bufferedWriter.close();
+		}catch( IOException ioex ) {
+			ioex.printStackTrace();
+			System.out.println("[ERR] unable to write order to users home directory");
+		}
+		
+		return total;
+	}
 	
 	@Override
 	public void revokeOrder(Order order) {
@@ -286,11 +359,129 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	}
 
 	@Override
-	public void checkOutVehicle(Order order) {
+	public void checkOutVehicle(Order order, Site site) {
 		
+		LocalDate ldToday = LocalDate.now(); 
+				
+		int checkedOutCount = 0;
+		oiloop: for(OrderItem oi : order.getItems() ) {
+			
+			// only if pickup day is equal to current day
+			LocalDateTime pickupLDT = oi.getPickupDT();
+			if ( ldToday.isEqual(pickupLDT.toLocalDate()) ) {
+				System.out.println("[info] current date and pickup date match!");
+			}else {
+				System.out.println("[err] you normaly cannot pickup the vehicle: <DEMO MODE>");
+			}
+			
+			// only vehicles at our site can be checked out
+			if ( oi.getPickupSite().equals( site ) ) {
+				// (1) flag the vehicle as rented
+				Vehicle vehicle = oi.getVehicle();	
+				if ( vehicle.isRented() == true ) { 
+						continue oiloop; 	// vehicle is already rented
+					}
+				vehicle.setRented(true);	
+				// (2) remove vehicle from pool
+				VehiclePool vp = site.getVehiclePool();
+				vp.removeVehicle(vehicle);		
+				// (3) assign to customer
+				(order.getCustomer()).addRentedVehicle(vehicle);
+				// (4) vehicle reservation has been added in place order process
+				// (5) will be set to true if returned
+				oi.setFinished(false);
+				
+				System.out.println( "\t\tchecked out: vehicle " + vehicle  ); checkedOutCount++;
+			}
+		}
+		System.out.println( checkedOutCount > 0 ?  "Have a good trip!" : "pls check vehicle location");	
+
+	}
+
+	@Override
+	public Site driveToNextDst(Order order) {
+		Site dst = null;
+		// get first oi
+		oiloop: for(OrderItem oi : order.getItems() ) {
+			Vehicle vehicle = oi.getVehicle();
+			if ( vehicle.isRented() ) {		// vehicle must be checked out
+				dst = oi.getReturnSite();
+				break oiloop;
+			}
+			
+		}
+		// return returnSite
+		System.out.println(dst == null ? "You need an ordered vehicle" : "bromm, bromm,  vrooommmm ..... arriving at " + dst.getName());
+		return dst;
+	}
+
+	@Override
+	public Order returnVehicle(java.util.Scanner sc, Order order, Site site) {
 		
+		System.out.println("pls enter distance travelled in km: ");
+		String input = sc.nextLine();
+		int km = Integer.parseInt(input);
+		double distancePrice = Office.PRICE_KM * km;
+		System.out.println("pls pay $ " + distancePrice + " for " + km + " km travel distance.");
+		
+		LocalDate ldToday = LocalDate.now(); 
+		
+		int returnCount = 0;
+		oiloop: for(OrderItem oi : order.getItems() ) {
+			// only if return day is equal to current day
+			LocalDateTime returnLDT = oi.getReturnDT();
+			if ( ldToday.isEqual(returnLDT.toLocalDate()) ) {
+				System.out.println("[info] current date and return date match!");
+			}else {
+				System.out.println("[err] you normaly cannot return the vehicle: <DEMO MODE>");
+			}	
+			
+			// only vehicles where destination is our side, can be returned
+			if ( oi.getReturnSite().equals( site ) ) {
+				// (1) flag the vehicle as rented
+				Vehicle vehicle = oi.getVehicle();	
+				if ( vehicle.isRented() == false ) { 
+						continue oiloop; 	// unknwon state, cannot happen, customer only has rented vehicles
+					}
+				vehicle.setRented(false);	
+				// (2) add vehicle to pool
+				VehiclePool vp = site.getVehiclePool();
+				vp.addVehicle(vehicle);		
+				// (3) remove from customer
+				(order.getCustomer()).removeRentedVehicle(vehicle);
+				// (4) remove vehicle reservation
+				vehicle.setReservedByOrder(null);
+				// (4b) add km travelled to vehicle
+				vehicle.addKilometersTravelled( km );
+				// (5) orderItem is finished
+				oi.setFinished(true);
+				
+				
+				System.out.println( "\t\treturned: vehicle " + vehicle  ); returnCount++;
+			}			
+			System.out.println( returnCount > 0 ?  "Thank you!" : "no vehicles have been returned!");	
+		}		
+		
+		return checkOrderCleared(order) ? null : order;
+	
 	}	
 
+	/*
+	 * checks if all order items are flagged finish, in that case, order
+	 * will be removed from car rental
+	 * */
+	private boolean checkOrderCleared( Order order ) {
+		CarRental cr = CarRental.getInstance();
+		boolean isCleared = true;
+		for( OrderItem oi : order.getItems() ) {
+			if (oi.isFinished() == false ) {
+				isCleared = false;
+			}
+		}
+		if ( isCleared )
+			cr.removeOrder(order);
+		return isCleared;
+	}
 	
 	
 	
