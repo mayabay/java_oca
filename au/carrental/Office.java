@@ -43,7 +43,7 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println( "[05] print my orders" );
 		System.out.println( "[06] print vehicles" );
 		System.out.println( "[07] add customer account" );
-		System.out.println( "[71] logout" );
+		System.out.println( "[71] logout (order in process is lost, vehicle reservation revoked)" );
 		System.out.println( "[72] login" );
 		System.out.println( "[08] list locations" );
 		System.out.println( "[09] drink coffee" );
@@ -133,7 +133,10 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		for ( Order order : customer.getOrders() ) {
 			System.out.println( "\t " + order );
 			for( OrderItem oi : order.getItems() ) {
-				System.out.println( "\t\\t " + oi );	
+				System.out.println( "\t\t " + oi );	
+			}
+			if (order.getInvoiceId() != -1) {
+				System.out.println("\t\t invoice id = " + order.getInvoiceId());
 			}
 		}
 		
@@ -143,8 +146,15 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	}
 
 	@Override
-	public void logout() {
+	public void logout( Order inProcessOrder ) {
 		// remove session data
+		// 1. remove vehicle reservations
+		if ( inProcessOrder != null ) {
+			for( OrderItem oi : inProcessOrder.getItems() ) {
+				Vehicle vehicle = oi.getVehicle();
+				vehicle.setReservedByOrder(null);
+			}
+		}
 		
 	}
 
@@ -264,20 +274,25 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println("OK? [y]es or [c]ancel ");
 		String finalStep = sc.nextLine();
 		
+		// 7) final steps for created order
 		if ( finalStep.equals("y") ) {
+			// 7.1 create order	
 			OrderItem orderItem = new OrderItem( vehicle, pickupSite, pickupLDT, returnSite, returnLDT );
 			order = new Order( LocalDateTime.now(), customer );
 			order.addItem(orderItem);
 			customer.addOrder(order);
+			// 7.2 reserve the vehicle
 			vehicle.setReservedByOrder(order);
-			double price = checkoutOrder( order );
-			System.out.println("total $ " + price + " for " + p.getDays() + " days.");
+			// 7.3 checkout (distance required )
+			// Office.printOrder(order, true);
+			// double price = checkoutOrder( order );
+			// System.out.println("total $ " + price + " for " + p.getDays() + " days.");
+			// 7.4 add order to car rental orders
+			cr.addOrder(order);
+			// 7.5 return urder
 			return order;
 		}
-		
-		// add order to car rental orders
-		cr.addOrder(order);
-		
+
 		return order;
 	}
 
@@ -300,9 +315,9 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		return LocalDateTime.of(year, month, day, hour, min);
 	}
 
-	private double checkoutOrder( Order order ) {
+	private static void printOrder( Order order, boolean writeToFile  ) {
 		
-		CarRental cr = CarRental.getInstance();
+		CarRental cr = CarRental.getInstance();		// only to get the company name
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("Company : " + cr.getName() + "\n");
@@ -324,31 +339,34 @@ public class Office implements CarRentalService, CarRentalAdminService {
 			double oiPrice = price * days;
 			total += oiPrice;
 			sb.append(oi.toString() + "\n");
-			sb.append("\t\t $ " + oiPrice + "\n");
+			sb.append("\t\t $ (car rental) " + oiPrice + "\n");
+			sb.append("\t\t $ (distance km )" + (oi.getDistanceTravelled() * Office.PRICE_KM) + "\n");
+			total += oi.getDistanceTravelled() * Office.PRICE_KM;
 		}
 		sb.append(" ---------------------------- " + "\n");
 		sb.append("\t\t $ total: " + total + "\n");
 		sb.append("payment: " + order.getPayment() + "\n");
 		
 		// write file 
-		// https://www.codejava.net/java-se/file-io/how-to-read-and-write-text-file-in-java
-		String userHome = System.getProperty("user.home");
-		File f = new File(userHome + File.separatorChar + "Order_id" + order.getOrderID() + "_.txt"  );
-		try {
-			if ( f.exists() ) {
-				f.delete();
-			}
-			
-			FileWriter writer = new FileWriter(f);
-			BufferedWriter bufferedWriter = new BufferedWriter(writer);			
-			bufferedWriter.write(sb.toString());
-			bufferedWriter.close();
-		}catch( IOException ioex ) {
-			ioex.printStackTrace();
-			System.out.println("[ERR] unable to write order to users home directory");
+		if ( writeToFile ) {
+			// https://www.codejava.net/java-se/file-io/how-to-read-and-write-text-file-in-java
+			String userHome = System.getProperty("user.home");
+			File f = new File(userHome + File.separatorChar + "Order_id" + order.getOrderID() + "_.txt"  );
+			try {
+				if ( f.exists() ) {
+					f.delete();
+				}
+				
+				FileWriter writer = new FileWriter(f);
+				BufferedWriter bufferedWriter = new BufferedWriter(writer);			
+				bufferedWriter.write(sb.toString());
+				bufferedWriter.close();
+			}catch( IOException ioex ) {
+				ioex.printStackTrace();
+				System.out.println("[ERR] unable to write order to users home directory");
+			}			
 		}
-		
-		return total;
+
 	}
 	
 	@Override
@@ -418,12 +436,30 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	@Override
 	public Order returnVehicle(java.util.Scanner sc, Order order, Site site) {
 		
+		// after updateing the order obj, update order in customers list;
+		Customer customer = order.getCustomer();
+		
+		// 1) get distance travelled from customer
 		System.out.println("pls enter distance travelled in km: ");
 		String input = sc.nextLine();
 		int km = Integer.parseInt(input);
 		double distancePrice = Office.PRICE_KM * km;
+		// calculate distance price
 		System.out.println("pls pay $ " + distancePrice + " for " + km + " km travel distance.");
 		
+		// 2) create invoice
+		double totalPrice = checkoutOrder( order, km );
+		System.out.println("total $ " + totalPrice + " (and travel distance of " + km + " km).");
+		Office.printOrder(order, true);
+		
+		// 2.1) update changed order in car rental list
+		CarRental cr = CarRental.getInstance();	
+		Order orderOldObj = cr.setOrder(order);	// updates the order object, returns  old version
+		
+		// 2.2 update customers order list
+		customer.setOrder(order);
+		
+		// 3) return vehicle
 		LocalDate ldToday = LocalDate.now(); 
 		
 		int returnCount = 0;
@@ -466,6 +502,37 @@ public class Office implements CarRentalService, CarRentalAdminService {
 	
 	}	
 
+	/*
+	 * calculate final price and create invoice
+	 * */
+	private double checkoutOrder( Order order, int kmTravelled ) {
+		double total = 0;
+		for(OrderItem oi : order.getItems() ) {
+			// 
+			oi.setDistanceTravelled(kmTravelled);
+			
+			Vehicle vehicle = oi.getVehicle();
+			
+			// calculate rental price
+			double price = vehicle.getRentalPrice();
+			LocalDateTime pickupLDT = oi.getPickupDT();
+			LocalDateTime returnLDT = oi.getReturnDT();
+			Period p = Period.between( pickupLDT.toLocalDate(), returnLDT.toLocalDate()  );
+			int days = p.getDays();
+			double oiPrice = price * days;
+			total += oiPrice;
+			
+			// calculate price distance travelled
+			double priceDistanceTravelled =  Office.PRICE_KM * kmTravelled;
+			total += priceDistanceTravelled;
+		}		
+		
+		// simulate invoice creation
+		order.setInvoiceId(-1);
+		
+		return total;
+	}	
+	
 	/*
 	 * checks if all order items are flagged finish, in that case, order
 	 * will be removed from car rental

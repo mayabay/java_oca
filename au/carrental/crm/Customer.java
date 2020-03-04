@@ -55,9 +55,21 @@ public class Customer {
 		return Collections.unmodifiableList(this.orders);
 	}
 
+	public Order popOrder() {
+		if ( this.orders.size() > 0 ) {
+			return this.orders.get(this.orders.size() -1 );
+		}else {
+			return null;
+		}
+	}
+	
 	public void addOrder (Order order) {
 		this.orders.add(order);
 	}
+	
+	public Order setOrder (Order order) {
+		 return this.orders.set(( this.orders.indexOf(order) ), order);
+	}	
 	
 	protected Account getAccount() {
 		return this.account;

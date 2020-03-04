@@ -26,7 +26,7 @@ public interface CarRentalService {
 	
 	public void printMyOrders( Customer customer );
 	
-	public void logout( );
+	public void logout( Order inProcessOrder );
 	
 	public Customer login( String username, String password );
 	

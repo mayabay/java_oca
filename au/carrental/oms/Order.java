@@ -44,6 +44,10 @@ public class Order {
 		this.invoiceId = invoiceIdPool++;
 	}
 
+	public int getInvoiceId() {
+		return invoiceId;
+	}
+
 	public  List<OrderItem> getItems(){
 		return Collections.unmodifiableList(this.items);
 	}
@@ -60,8 +64,5 @@ public class Order {
 	public String toString() {
 		return "Order [orderID=" + orderID + "]";
 	}
-	
-	
-	
 	
 }

@@ -23,9 +23,14 @@ public class Test {
 	private static	List<String> 	v7pool = new ArrayList<>();
 	private static	List<String> 	v8pool = new ArrayList<>();
 	
-	private 		Site 			location;
-	private 		Customer		customer;
-	private 		Order			order;
+	private 		OfficeSession	officeSession;		// stores customer client sessions
+	
+	// client data of current session
+	private 		Site 			location;		// current location of customer
+	private 		Customer		customer;		// logged in customer
+	private 		Order			order;			// order in process
+	private 		Session			session;		// clients session object (customer, site)
+	
 	
 	{
 		// type (car,bike) | manufacturer | model | purchaseDate JJJJ-MM-TT | kilometersTravelled | vehicleId| rentalPrice 
@@ -217,6 +222,9 @@ public class Test {
 		// set location
 		t.location = Test.carRental.getSite(0);
 		
+		// prepare session object
+		t.session = OfficeSession.buildInstance();
+		
 		// enter office
 		t.enterOffice( Test.carRental );
 		
@@ -231,8 +239,9 @@ public class Test {
 		
 		//John,Doe,46,john.doe@mail.com,password
 		if (debug) {
-			this.customer = office.addCustomer("John", "Doe", 46, "john.doe@mail.com", "pw");
-			System.out.println("Test.enterOffice() customer created: John,Doe,46,john.doe@mail.com,pw  ");
+			this.customer = office.addCustomer("John", "Doe", 46, "john.doe@mail.com", "Pa$$w0rd");
+			System.out.println("Test.enterOffice() customer created: John,Doe,46,john.doe@mail.com,Pa$$w0rd  ");
+			this.session = this.officeSession.addSession(customer, location);
 		}
 		office.printWelcomeMessage();
 		
@@ -322,11 +331,22 @@ public class Test {
 
 		String[] splits = in.split("[|]");
 		this.customer = office.login(splits[0], splits[1]);
+		if ( this.customer != null ) {
+			this.order = this.customer.popOrder();
+		}
 	}
 	
 	private void logout( Office office ) {
 		this.customer = null;
-		office.logout();
+		// release reserved vehiclkes
+		office.logout( order );
+		// remove current order process
+		this.order = null;
+		// remove session
+		this.session = null;
+		// back to sidney
+		t.location = Test.carRental.getSite(0);
+		
 	}
 	
 	private Site setSite( Scanner sc ) {

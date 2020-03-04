@@ -25,17 +25,18 @@ public class Account {
 
 	
 	
-	private static final int 	ITERATION_COUNT = 32;	//  65536
-	private static final int 	KEY_LENGTH = 128;
+	private static final 	int 	ITERATION_COUNT = 32;	//  65536
+	private static final 	int 	KEY_LENGTH = 128;
 	
-	private static 		int 	accountIdPool = 1001;
+	private static 			int 	accountIdPool = 1001;
+	private 				String	user;
+	//private 				String	passw;
+	private 				String	eMail;
+	private 				byte[] 	salt;
+	private 				byte[]	passwHash_PBKDF2;
+	private 				String  saltedHashedPassword;
 	
-	private 		String	user;
-	//private 		String	passw;
-	private 		String	eMail;
-	private 		byte[] 	salt;
-	private 		byte[]	passwHash_PBKDF2;
-	private 		String  saltedHashedPassword;
+	// ----------------------------------------
 	
 	public  Account(String user, String passw, String eMail) {
 		super();
@@ -180,9 +181,11 @@ public class Account {
 		
 		// ok no match
 		System.out.println( "\t\t [Login failed] account found, but password invalid!"  );
-		return account;
+		return null;	// return null here!!!!
 	}
 
+	// ----------------------------------------	
+	
 	@Override
 	public String toString() {
 		return "Account [user=" + user + "]";

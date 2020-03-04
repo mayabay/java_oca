@@ -82,4 +82,8 @@ public class CarRental {
 		return this.orders.remove(o);
 	}	
 	
+	public Order setOrder( Order order ) {
+		return this.orders.set((this.orders.indexOf(order)), order);
+	}
+	
 }

@@ -15,6 +15,7 @@ public class OrderItem {
 	private 		LocalDateTime	returnDT;
 	
 	private 		boolean			isFinished;
+	private			int 			distanceTravelled;
 	
 	public OrderItem( Vehicle vehicle, Site pickupSite, LocalDateTime pickupDT, Site returnSite,
 			LocalDateTime returnDT) {
@@ -58,8 +59,18 @@ public class OrderItem {
 		return returnDT;
 	}
 
+	public int getDistanceTravelled() {
+		return distanceTravelled;
+	}
+
+	public void setDistanceTravelled(int distanceTravelled) {
+		this.distanceTravelled = distanceTravelled;
+	}	
+	
 	// ----------------------------------------
 	
+
+
 	@Override
 	public String toString() {
 		return "OrderItem [vehicle = "+ vehicle +", pickupSite=" + pickupSite.getAddress().getCity() + ", returnSite=" + returnSite.getAddress().getCity() + "]";
