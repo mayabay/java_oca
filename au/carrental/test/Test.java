@@ -223,7 +223,7 @@ public class Test {
 		t.location = Test.carRental.getSite(0);
 		
 		// prepare session object
-		t.session = OfficeSession.buildInstance();
+		t.officeSession = OfficeSession.buildInstance();
 		
 		// enter office
 		t.enterOffice( Test.carRental );
@@ -241,7 +241,16 @@ public class Test {
 		if (debug) {
 			this.customer = office.addCustomer("John", "Doe", 46, "john.doe@mail.com", "Pa$$w0rd");
 			System.out.println("Test.enterOffice() customer created: John,Doe,46,john.doe@mail.com,Pa$$w0rd  ");
+			
+			Customer cu2 = office.addCustomer("Frank", "Smith", 26, "frank.smith@googlemail.com", "Pa$$w0rd");
+			System.out.println("Test.enterOffice() customer created: Frank,Smith,26,frank.smith@googlemail.com,Pa$$w0rd");
+			
+			Customer cu3 = office.addCustomer("Travis", "Bickle", 26, "travis.bickle@cabdriver.ny", "Pa$$w0rd");
+			System.out.println("Test.enterOffice() customer created: Travis,Bickle,26,travis.bickle@cabdriver.ny,Pa$$w0rd");
+			
+			// Mr Doe enters office
 			this.session = this.officeSession.addSession(customer, location);
+			System.out.println("Mr. Doe enters the office in Sidney ...");
 		}
 		office.printWelcomeMessage();
 		
@@ -332,7 +341,13 @@ public class Test {
 		String[] splits = in.split("[|]");
 		this.customer = office.login(splits[0], splits[1]);
 		if ( this.customer != null ) {
+			// get the last processed order
 			this.order = this.customer.popOrder();
+			// get the user session and if present, set the site
+			this.session = this.officeSession.getSession(customer);
+			if ( this.session != null ) {
+				this.location = this.session.getSite();
+			}
 		}
 	}
 	
@@ -345,7 +360,7 @@ public class Test {
 		// remove session
 		this.session = null;
 		// back to sidney
-		t.location = Test.carRental.getSite(0);
+		this.location = Test.carRental.getSite(0);
 		
 	}
 	

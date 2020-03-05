@@ -25,9 +25,10 @@ public class OfficeSession {
 		this.sessions = new ArrayList<>();
 	}
 	
-	public  static void buildInstance( ) {
+	public  static OfficeSession buildInstance( ) {
 		if ( instance == null ) {
 			instance = new OfficeSession();
+			return instance;
 		} else {
 			throw new IllegalStateException("This method can only be called once!");
 		}
@@ -39,20 +40,15 @@ public class OfficeSession {
 		return instance;
 	}	
 	
-	public Session getSession( Customer customer, Site site ) {
+	public Session getSession( Customer customer ) {
 		Session session = null;
 		sessloop: for ( Session s : this.sessions ) {
 			Customer cu = s.getCustomer();
-			Site si = s.getSite();
-			boolean cuMatch = false, siMatch = false; 
-			if ( cu.equals(customer) ) { cuMatch = true; }
-			if ( si.equals(site) ) { siMatch = true; }
-			if ( cuMatch && siMatch ) { 
+			if ( cu.equals(customer) ) {
 				session = s;
 				break sessloop;
 			}
 		}		
-		
 		return session;
 	}
 	
@@ -62,15 +58,11 @@ public class OfficeSession {
 		return session;
 	}
 	
-	public void removeSession( Customer customer, Site site  ) {
+	public void removeSession( Customer customer ) {
 		// need to remove a session
 		sessloop: for ( Session s : this.sessions ) {
 			Customer cu = s.getCustomer();
-			Site si = s.getSite();
-			boolean cuMatch = false, siMatch = false; 
-			if ( cu.equals(customer) ) { cuMatch = true; }
-			if ( si.equals(site) ) { siMatch = true; }
-			if ( cuMatch && siMatch ) { 
+			if ( cu.equals(customer) ) { 
 				this.sessions.remove(s);
 				break sessloop;
 			}
