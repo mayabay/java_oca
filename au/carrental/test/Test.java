@@ -41,6 +41,7 @@ public class Test {
 		v1pool.add( "starship|USS Enterprise|NCC-1701|2245-04-02|234678123|NCC-1701|1250000" );
 		
 		v2pool.add( "car|Mercedes|A|2018-01-05|6230|HH XX 5368|55" );
+		v2pool.add( "car|Ford|T|1915-05-05|75402|HH FT 1915|75" );
 		
 		v3pool.add( "car|VW|Kaefer|2019-01-23|1978|HH XX 5369|25" );
 		
@@ -94,7 +95,7 @@ public class Test {
 		return v;
 	}
 	
-	void buildCarRentalService() {
+	void _buildCarRentalService() {
 		
 		// 1) name of company
 		String nameOfCompany = "James Cook's Car Rental Service, since 1770!" ;
@@ -217,8 +218,11 @@ public class Test {
 		Test t = new Test();
 		
 		// build model
-		t.buildCarRentalService();
-
+		//t.buildCarRentalService();
+		CarRentalBuilder.buildInstance();								// build builder
+		CarRentalBuilder crbinstance = CarRentalBuilder.getInstance();	// get builder instance
+		carRental = crbinstance.buildCarRentalInstance();				// build car rental
+		
 		// set location
 		t.location = Test.carRental.getSite(0);
 		
@@ -247,6 +251,9 @@ public class Test {
 			
 			Customer cu3 = office.addCustomer("Travis", "Bickle", 26, "travis.bickle@cabdriver.ny", "Pa$$w0rd");
 			System.out.println("Test.enterOffice() customer created: Travis,Bickle,26,travis.bickle@cabdriver.ny,Pa$$w0rd");
+
+			Customer cu4 = office.addCustomer("Leonard", "Nimoy", 45, "leonard.nimoy@startrek.org", "Pa$$w0rd");
+			System.out.println("Test.enterOffice() customer created: Leonard,Nimoy,45,leonard.nimoy@startrek.org,Pa$$w0rd");			
 			
 			// Mr Doe enters office
 			this.session = this.officeSession.addSession(customer, location);
@@ -320,7 +327,9 @@ public class Test {
 							}			
 							break;
 				case "81": 	office.printAllCustomers(); 
-							break;							
+							break;	
+				case "82": 	office.printVehicleSelection(); 
+							break;									
 				case "99": 	visitingCarRental = false; 
 							break;
 				default: 	//visitingCarRental = false; 

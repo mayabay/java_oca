@@ -95,6 +95,10 @@ public class Customer {
 		return this.rentedVehicles.remove(vehicle);
 	}
 
+	public List<Vehicle> getRentedVehicles(){
+		return Collections.unmodifiableList(this.rentedVehicles);
+	}
+	
 	public void printRentedVehicles() {
 		for( Vehicle vehicle : this.rentedVehicles ) {
 			System.out.println("\t\t rented --> " + vehicle);

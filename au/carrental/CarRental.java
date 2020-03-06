@@ -86,4 +86,24 @@ public class CarRental {
 		return this.orders.set((this.orders.indexOf(order)), order);
 	}
 	
+	public List<Vehicle> getAllVehicles( boolean withRented ){
+		List<Vehicle> retList = new ArrayList<>();
+		// 1.) get the list from the vehicle pools
+		for( Site site : this.sites ) {
+			VehiclePool vp = site.getVehiclePool();
+			for( Vehicle v : vp.getVehicleList() ) {
+				retList.add(v);
+			}
+		}
+		// 2.) get rented vehicles
+		if (withRented) {
+			for( Customer customer : this.customers ) {
+				List<Vehicle> rentedByCustomer = customer.getRentedVehicles();
+				for( Vehicle vc : rentedByCustomer ) { retList .add(vc); }
+			}			
+		}
+
+		return retList;
+	}
+	
 }

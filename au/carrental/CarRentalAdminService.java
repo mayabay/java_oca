@@ -11,4 +11,5 @@ public interface CarRentalAdminService {
 
 	public void printAllCustomers();
 	
+	public void printVehicleSelection();
 }

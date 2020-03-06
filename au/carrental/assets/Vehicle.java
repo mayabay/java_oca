@@ -4,6 +4,9 @@
  * basic representation of car and mototbike
  * */
 package au.carrental.assets;
+import java.util.function.Predicate;
+import java.util.function.BiPredicate;
+import au.carrental.TriPredicate;
 import java.time.LocalDate;
 import au.carrental.oms.Order;
 public abstract class Vehicle {
@@ -38,6 +41,20 @@ public abstract class Vehicle {
 		this.kilometersTravelled  = kilometersTravelled;
 		this.rentalPrice = rentalPrice;
 	}
+	
+	// ----------------------------------------
+	//public interface TriPredicate<T, U, V>{
+	//	public abstract boolean test( T v, U d1, V d2 );
+	//}
+	
+	// Predicate<Vehicle> filterBy...	String
+	public static final BiPredicate<Vehicle, String> filterByType = (Vehicle v, String str) ->  v.type.equals(str);
+	public static final BiPredicate<Vehicle, String> filterByManufacturer = (Vehicle v, String str) ->  v.manufacturer.equals(str);
+	public static final BiPredicate<Vehicle, String> filterByModel = (Vehicle v, String str) ->  v.model.equals(str);
+	public static final BiPredicate<Vehicle, String> filterByVehicleId = (Vehicle v, String str) ->  v.vehicleId.equals(str);
+	public static final TriPredicate<Vehicle, Double, Double> filterByRentalPriceRange = (Vehicle v, Double d1, Double d2) -> v.rentalPrice >= d1.doubleValue() & v.rentalPrice <= d2.doubleValue();
+	public static final BiPredicate<Vehicle, Boolean> filterByRented = (Vehicle v, Boolean b) ->  v.isRented == b;
+	
 	
 	// ----------------------------------------
 	

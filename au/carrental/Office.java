@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 import au.carrental.assets.CoffeeMachine;
 import au.carrental.assets.Site;
@@ -26,6 +28,8 @@ import au.carrental.test.Test;
 import au.carrental.assets.Vehicle;
 
 public class Office implements CarRentalService, CarRentalAdminService {
+
+
 
 	private 	final 	static 		int 	MINIMUM_AGE_YEARS = 26;
 	
@@ -53,6 +57,7 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println( "[13] drive to next destination" );
 		System.out.println( "[14] return vehicle" );
 		System.out.println( "[81] print all customers*" );
+		System.out.println( "[82] print vehicle selection*" );
 		System.out.println( "[99] exit the office" );
 	}	
 	
@@ -550,8 +555,82 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		return isCleared;
 	}
 	
+
+	@Override
+	public void printVehicleSelection() {
+		
+		CarRental cr = CarRental.getInstance();
+		
+		Scanner sc = new Scanner(System.in);
+		
+		List<Vehicle> retList = new ArrayList<>();
+		
+		// 1.)
+		System.out.println("enter search criteria and value like this -> type|car :");
+		System.out.println("filter e.g. *|*  manufacturer|BMW  model|Sprinter vehicleId|NCC-1701");
+		System.out.println("filter e.g. price|25-60");
+		System.out.println("filter e.g. isRented|true (not working !!! ->TODO rented car store in rented list for cr)");
+		
+		String input = sc.nextLine();
+		String[] splits = input.split("[|]");
+		
+		// 2.) call predicate
+		switch( splits[0] ) {
+			case "*"	:			retList = cr.getAllVehicles(true); 
+							break;
+			case "type" :			retList = getVehicleSelectionByStringProperty( cr.getAllVehicles(true), Vehicle.filterByType, splits[1] );
+							break;
+			case "manufacturer" :	retList = getVehicleSelectionByStringProperty( cr.getAllVehicles(true), Vehicle.filterByManufacturer, splits[1] );
+							break;
+			case "model" :			retList = getVehicleSelectionByStringProperty( cr.getAllVehicles(true), Vehicle.filterByModel, splits[1] );
+							break;	
+			case "vehicleId" :		retList = getVehicleSelectionByStringProperty( cr.getAllVehicles(true), Vehicle.filterByVehicleId, splits[1] );
+							break;	
+			case "price"	:		String[] doubles =  splits[1].split("[-]");
+									retList = getVehicleSelectionByTriProperty( cr.getAllVehicles(true), Vehicle.filterByRentalPriceRange, new Double(doubles[0]) , new Double(doubles[1]) );
+							break;
+			case "isRented"	: 		retList = getVehicleSelectionByBiPredicateBoolProperty( cr.getAllVehicles(true), Vehicle.filterByRented, new Boolean(splits[1]) );
+							break;
+			default: 		System.out.println("unknown search criteria!");
+							break;					
+		}
+		
+		//sc.close();
+		
+		// 3.) show selection
+		for( Vehicle vehicle : retList ) {
+			System.out.println( vehicle );
+		}
+	}
 	
+	private List<Vehicle> getVehicleSelectionByStringProperty( List<Vehicle> vehicles, BiPredicate<Vehicle, String> filter, String property ){
+		List<Vehicle> retList = new ArrayList<>();
+		for( Vehicle vehicle : vehicles ) {
+			if ( filter.test(vehicle, property) ) {
+				retList.add(vehicle);
+			}
+		}
+		return retList;
+	}
 	
+	private List<Vehicle> getVehicleSelectionByTriProperty( List<Vehicle> vehicles, TriPredicate<Vehicle, Double, Double> filter, Double val1, Double val2 ){
+		List<Vehicle> retList = new ArrayList<>();
+		for( Vehicle vehicle : vehicles ) {
+			if ( filter.test(vehicle, val1, val2) ) {
+				retList.add(vehicle);
+			}
+		}
+		return retList;
+	}	
 	
+	private List<Vehicle> getVehicleSelectionByBiPredicateBoolProperty( List<Vehicle> vehicles, BiPredicate<Vehicle, Boolean> filter, Boolean b){
+		List<Vehicle> retList = new ArrayList<>();
+		for( Vehicle vehicle : vehicles ) {
+			if ( filter.test(vehicle, b) ) {
+				retList.add(vehicle);
+			}
+		}
+		return retList;
+	}		
 	
 }
