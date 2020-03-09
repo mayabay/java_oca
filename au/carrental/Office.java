@@ -569,7 +569,7 @@ public class Office implements CarRentalService, CarRentalAdminService {
 		System.out.println("enter search criteria and value like this -> type|car :");
 		System.out.println("filter e.g. *|*  manufacturer|BMW  model|Sprinter vehicleId|NCC-1701");
 		System.out.println("filter e.g. price|25-60");
-		System.out.println("filter e.g. isRented|true (not working !!! ->TODO rented car store in rented list for cr)");
+		System.out.println("filter e.g. isRented|true");
 		
 		String input = sc.nextLine();
 		String[] splits = input.split("[|]");

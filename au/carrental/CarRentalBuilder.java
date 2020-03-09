@@ -90,7 +90,7 @@ public class CarRentalBuilder {
 	private List<Site> sites = new ArrayList<>();
 	
 	// ------------------------------------------------------------------------
-
+	public static boolean isBuild = false;
 	// ------------------------------------------------------------------------	
 	
 	private CarRentalBuilder() {		
@@ -265,6 +265,10 @@ public class CarRentalBuilder {
 	
 	public  CarRental buildCarRentalInstance() {
 		
+		if (CarRentalBuilder.isBuild ) {
+			throw new IllegalStateException("A car rental instance has already been built!");
+		}
+		
 		// 1)
 		buildVehicleStringLists();
 		
@@ -292,6 +296,8 @@ public class CarRentalBuilder {
 		// sites
 		// office		
 		CarRental.buildInstance(nameOfCompany, sites, office);		
+		
+		CarRentalBuilder.isBuild = true;
 		
 		// get the instance for testing
 		return CarRental.getInstance();		
