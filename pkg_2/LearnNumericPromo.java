@@ -3,7 +3,15 @@ class LearnNumericPromo{
 
 
 	public static void main(String[] args){
-		autowide();
+		//autowide();
+        Integer i = 999999;
+        //int i = 999999;
+        char c = 'c';
+        //c *= i;
+        c += i;
+
+        System.out.println( c );
+
 	}
 
 
