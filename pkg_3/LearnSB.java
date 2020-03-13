@@ -4,7 +4,7 @@ public class LearnSB{
 
 
     public static void main(String[] args){
-        do2(); 
+        do4(); 
     }
 
     static void p(CharSequence c){
@@ -19,6 +19,41 @@ public class LearnSB{
 		System.out.println(  );
 	}
 
+	static int[] getArr(){
+		//return null;
+		return new int[] { 1,2,3,4 };
+	}
+
+	static void do4(){
+		String str = null;
+		String newStr = str + 'g';
+		//String newStr2 = null + 'g';		// DNC 30: error: bad operand types for binary operator '+'
+		//p(newStr2);			
+
+		String lo = "lo";
+		String hello = "hello";
+		System.out.println( hello == ("hel" + lo) ); 		// false	because right hand not in string pool
+		System.out.println( hello == ("hel" + "lo") ); 		// true
+		String hello2 = "hel" + lo;	// not in String pool
+		System.out.println( hello == ( hello2.intern() ) );	// true 	because right hand NOW in string pool 
+
+	}
+
+	static void do3(){
+		//  0 1 2 3 4 5
+		//	a n i m a l
+		StringBuffer sb = new StringBuffer("animal");
+		sb = sb.replace( 2,5, "bi" );
+		System.out.println( sb );	// a n b i l
+
+		int index = 0;
+
+		//System.out.println( getArr()[index = 2]++ );
+		System.out.println( ++getArr()[index = 2] );
+
+		System.out.println( index );
+
+	}
 
 
     static void do1(){
