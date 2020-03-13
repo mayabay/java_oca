@@ -24,6 +24,14 @@ public class LearnSB{
 		return new int[] { 1,2,3,4 };
 	}
 
+    static void do5(){
+        Integer i = new Integer(42);
+        Long l = new Long(42);
+        ////i == l;
+        i.equals(l);
+    }
+
+
 	static void do4(){
 		String str = null;
 		String newStr = str + 'g';
@@ -36,6 +44,9 @@ public class LearnSB{
 		System.out.println( hello == ("hel" + "lo") ); 		// true
 		String hello2 = "hel" + lo;	// not in String pool
 		System.out.println( hello == ( hello2.intern() ) );	// true 	because right hand NOW in string pool 
+
+       
+
 
 	}
 
