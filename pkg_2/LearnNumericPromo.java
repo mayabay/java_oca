@@ -11,6 +11,9 @@ class LearnNumericPromo{
         c += i;
 
         System.out.println( c );
+		
+		double d = 03.50D;
+		System.out.println( "d = " + d );
 
 	}
 
