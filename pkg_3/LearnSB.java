@@ -4,7 +4,7 @@ public class LearnSB{
 
 
     public static void main(String[] args){
-        do4(); 
+        do6(); 
     }
 
     static void p(CharSequence c){
@@ -22,6 +22,12 @@ public class LearnSB{
 	static int[] getArr(){
 		//return null;
 		return new int[] { 1,2,3,4 };
+	}
+
+	static void do6(){
+		StringBuffer sb = new StringBuffer("123456789");
+		sb.setLength(5);
+		p(sb);
 	}
 
     static void do5(){
