@@ -25,6 +25,8 @@ public class TestClass1 {
 
 	}
 
+	
+
 	static void amethod() throws IOException {
 	}
 }
