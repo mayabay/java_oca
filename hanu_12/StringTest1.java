@@ -1,8 +1,17 @@
 package hanu_12;
+import java.util.*;
 class StringTest1 {
 
 	public static void main(String[] args){
-		do1();
+		do2();
+	}
+
+	static void do2(){
+		String sArr[] = { "01","11","97", "65", "$","_","J","a","A" };
+		Arrays.sort( sArr );
+		System.out.println(  Arrays.toString(sArr) );	// [$, 01, 11, 65, 97, A, J, _, a]
+ 			
+
 	}
 
 	static void do1(){

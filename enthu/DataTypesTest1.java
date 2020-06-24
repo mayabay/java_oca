@@ -2,9 +2,20 @@ package enthu;
 class DataTypesTest1 {
 
 	public static void main(String[] args){
-		do1();	
+		do2();	
 
 	}
+
+	static void do2(){
+		boolean eq = 0.0 == -0.0;
+		System.out.println( eq );
+
+		double d = 1.0 / 0; 
+		System.out.println( d );	// Infinity
+		
+
+	}
+
 	static void do1(){
 		Boolean b1 = new Boolean("trUE");
 		System.out.println( b1.valueOf( true ) );
